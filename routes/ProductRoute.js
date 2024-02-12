@@ -8,7 +8,7 @@ routerP.get('/getProducts', (req, res) => {
     var query = "SELECT * FROM productos";
     connection.query(query, (error, results) => {
         if (!error) {
-            return res.status(200).json(results.rows);
+            return res.status(200).json(results);
         } else {
             return res.status(500).json(error);
         }
