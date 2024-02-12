@@ -5,7 +5,7 @@ const ProductRoute = require('./routes/ProductRoute');
 const app = express();
 
 // Middleware de mensaje de bienvenida
-app.get('/', (req, res) => {
+app.get('/Productos', (req, res) => {
     res.send('¡Bienvenido a nuestra aplicación!');
 });
 
