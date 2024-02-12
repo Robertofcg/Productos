@@ -5,7 +5,7 @@ const routerP = express.Router();
 require('dotenv').config();
 
 routerP.get('/getProducts', (req, res) => {
-    var query = "SELECT * FROM productos";
+    var query = "SELECT * FROM Productos";
     connection.query(query, (error, results) => {
         if (!error) {
             return res.status(200).json(results);

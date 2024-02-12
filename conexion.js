@@ -41,13 +41,15 @@ const pool = mysql.createPool({
 });
 
 // // Realizar operaciones de base de datos
-// pool.query('SELECT * FROM productos', (error, results, fields) => {
-//     if (error) {
-//         console.error('Error al realizar la consulta:', error);
-//         return;
-//     }
-//     console.log('Resultados de la consulta:', results);
-// });
+pool.query('SELECT * FROM Productos', (error, results, fields) => {
+    if (error) {
+        console.error('Error al realizar la consulta:', error);
+        return;
+    }
+    console.log('Resultados de la consulta:', results);
+});
+
+
 // Manejar el evento 'connection' para imprimir un mensaje cuando se conecte con éxito
 pool.on('connection', function (connection) {
     console.log('¡Conexión establecida con éxito!');
