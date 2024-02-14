@@ -26,5 +26,23 @@ routerP.get('/getProducts', (req, res) => {
     })
 });
 
+routerP.get('/getProducts/:id', (req, res) => {
+    const productId = req.params.id;
+    var query = "SELECT * FROM Productos WHERE ID = ?";
+    connection.query(query, [productId], (error, results) => {
+        if (!error) {
+            if (results.length > 0) {
+                const producto = results[0];
+                return res.status(200).json(producto);
+            } else {
+                return res.status(404).json({ message: 'Producto no encontrado' });
+            }
+        } else {
+            return res.status(500).json(error);
+        }
+    });
+});
+
+
 
 module.exports = routerP;
