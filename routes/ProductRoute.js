@@ -28,7 +28,7 @@ routerP.get('/getProducts', (req, res) => {
 
 routerP.get('/getProducts/:id', (req, res) => {
     const productId = req.params.id;
-    var query = "SELECT i.Imagen p.Nombre AS ImagenBase64 FROM Productos p LEFT JOIN Imagenes i ON p.ID = i.ProductoID WHERE p.ID = ?";
+    var query = "SELECT i.Imagen, p.Nombre AS ImagenBase64 FROM Productos p LEFT JOIN Imagenes i ON p.ID = i.ProductoID WHERE p.ID = ?";
     connection.query(query, [productId], (error, results) => {
         if (!error) {
             // Si no se encontraron resultados
