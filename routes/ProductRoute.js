@@ -28,35 +28,25 @@ routerP.get('/getProducts', (req, res) => {
 
 routerP.get('/getProducts/:id', (req, res) => {
     const productId = req.params.id;
-    var query = "SELECT *, (SELECT TO_BASE64(Imagen) FROM Imagenes WHERE ProductoID = ? LIMIT 1) AS ImagenBase64 FROM Productos WHERE ID = ?";
-    connection.query(query, [productId, productId], (error, results) => {
+    var query = "SELECT i.Imagen AS ImagenBase64 FROM Productos p LEFT JOIN Imagenes i ON p.ID = i.ProductoID WHERE p.ID = ?";
+    connection.query(query, [productId], (error, results) => {
         if (!error) {
-            if (results.length > 0) {
-                const producto = results[0];
-                obtenerImagenesAdicionales(productId, producto, res);
-            } else {
-                return res.status(404).json({ message: 'Producto no encontrado' });
+            // Si no se encontraron resultados
+            if (results.length === 0) {
+                return res.status(404).json({ message: "Producto no encontrado" });
             }
+            // Convertir las imágenes blob en base64 si existen
+            results.forEach(result => {
+                if (result.ImagenBase64) {
+                    result.ImagenBase64 = result.ImagenBase64.toString('base64');
+                }
+            });
+            return res.status(200).json(results);
         } else {
             return res.status(500).json(error);
         }
     });
 });
-
-function obtenerImagenesAdicionales(productId, producto, res) {
-    var query = "SELECT TO_BASE64(Imagen) AS ImagenBase64 FROM Imagenes WHERE ProductoID = ?";
-    connection.query(query, [productId], (error, results) => {
-        if (!error) {
-            const imagenesBase64 = results.map(result => result.ImagenBase64);
-            producto.imagenes_adicionales = imagenesBase64;
-            return res.status(200).json(producto);
-        } else {
-            return res.status(500).json(error);
-        }
-    });
-}
-
-
 
 
 

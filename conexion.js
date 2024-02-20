@@ -40,13 +40,44 @@ const pool = mysql.createPool({
     }
 });
 
-// // Realizar operaciones de base de datos
+// Realizar operaciones de base de datos
 pool.query('SELECT * FROM Productos', (error, results, fields) => {
     if (error) {
         console.error('Error al realizar la consulta:', error);
         return;
     }
     console.log('Resultados de la consulta:', results);
+});
+
+// Aquí dentro del callback, puedes realizar la segunda consulta y enviar la respuesta al cliente
+pool.query('SELECT p.*, i.Imagen AS ImagenBase64 FROM Productos p LEFT JOIN Imagenes i ON p.ID = i.ProductoID', (error, results) => {
+    if (error) {
+        console.error('Error al realizar la consulta:', error);
+        return;
+    }
+
+    const productosConImagenes = results.map(producto => {
+        return {
+            ID: producto.ID,
+            Nombre: producto.Nombre,
+            Cantidad: producto.Cantidad,
+            Marca: producto.Marca,
+            Modelo: producto.Modelo,
+            Voltaje: producto.Voltaje,
+            Potencia: producto.Potencia,
+            Precio: producto.Precio,
+            Lumenes: producto.Lumenes,
+            Atenuable: producto.Atenuable,
+            VidaUtil: producto.VidaUtil,
+            Dimensiones: producto.Dimensiones,
+            Angulo: producto.Angulo,
+            Descripcion: producto.Descripcion,
+            Imagenes64: producto.ImagenBase64 ? producto.ImagenBase64.toString('base64') : null
+        };
+    });
+
+    // Envía la respuesta JSON al cliente
+    console.log('Resultados de la segunda consulta:', productosConImagenes);
 });
 
 
