@@ -53,32 +53,55 @@ routerP.get('/getProducts/:id', (req, res) => {
     });
 });
 
-// Ruta para registrar un producto
-routerP.post('/registrarProducto', verifyToken, (req, res) => {
+// Ruta para registrar un producto con su imagen y varias imágenes adicionales
+routerP.post('/registrarProductoConImagenes', verifyToken, (req, res) => {
     // Obtener los datos del cuerpo de la solicitud
-    const { Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, ImagenBase64 } = req.body;
+    const { Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, ImagenBase64, ImagenesAdicionales } = req.body;
 
-    // Decodificar la imagen base64
-    const Imagenes = Buffer.from(ImagenBase64, 'base64');
+    // Decodificar la imagen base64 del producto
+    const ImagenProducto = Buffer.from(ImagenBase64, 'base64');
 
-    // Consulta SQL para insertar un nuevo producto en la base de datos
-    const query = `
+    // Consulta SQL para insertar un nuevo producto con su imagen en la tabla "Productos"
+    const queryProducto = `
         INSERT INTO Productos (Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, Imagenes) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    // Ejecutar la consulta SQL con los parámetros proporcionados
-    connection.query(query, [Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, Imagenes], (error, results) => {
+    // Ejecutar la consulta SQL para insertar el producto con su imagen
+    connection.query(queryProducto, [Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, ImagenProducto], (error, resultProducto) => {
         if (error) {
             console.error('Error al insertar el producto en la base de datos:', error);
             return res.status(500).json({ message: 'Error interno del servidor' });
         }
 
-        // Si se inserta el producto correctamente
-        console.log('Producto registrado con éxito en la base de datos');
-        return res.status(201).json({ message: 'Producto registrado con éxito' });
+        // Obtener el ID del producto recién insertado
+        const ProductoID = resultProducto.insertId;
+
+        // Decodificar y procesar las imágenes base64 adicionales
+        const processedImages = ImagenesAdicionales.map(imageData => {
+            return [ProductoID, Buffer.from(imageData.ImagenBase64, 'base64')];
+        });
+
+        // Consulta SQL para insertar varias imágenes adicionales en la tabla "Imagenes"
+        const queryImagenes = `
+            INSERT INTO Imagenes (ProductoID, Imagen) 
+            VALUES ?
+        `;
+
+        // Ejecutar la consulta SQL para insertar las imágenes adicionales
+        connection.query(queryImagenes, [processedImages], (error, resultImagenes) => {
+            if (error) {
+                console.error('Error al insertar las imágenes adicionales en la base de datos:', error);
+                return res.status(500).json({ message: 'Error interno del servidor' });
+            }
+
+            // Enviar una respuesta indicando que el producto y las imágenes han sido registrados con éxito
+            return res.status(201).json({ message: 'Producto y todas las imágenes registrados con éxito' });
+        });
     });
 });
+
+
 
 
 

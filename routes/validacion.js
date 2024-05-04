@@ -1,11 +1,7 @@
-// Importar el módulo 'jsonwebtoken'
 const jwt = require('jsonwebtoken');
-// Importar el paquete dotenv
 require('dotenv').config();
 
-// Definir el secreto para firmar y verificar tokens JWT
-const SECRET_KEY = process.env.SECRET_KEY;
-// Middleware de autenticación
+
 function verifyToken(req, res, next) {
     // Obtener el token de la cabecera de autorización
     const authHeader = req.headers['authorization'];
