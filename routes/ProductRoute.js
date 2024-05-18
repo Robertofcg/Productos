@@ -16,13 +16,15 @@ function blobToBase64(blob) {
 }
 
 routerP.get('/getProducts', (req, res) => {
-    var query = "SELECT *, TO_BASE64(Imagenes) AS ImagenBase64 FROM Productos"; // Utilizamos TO_BASE64() en lugar de CONVERT_TO()
+    var query = "SELECT *, TO_BASE64(Imagenes) AS ImagenBase64 FROM productos"; // Utilizamos TO_BASE64() en lugar de CONVERT_TO()
     connection.query(query, (error, results) => {
         if (!error) {
             // Convertir las imágenes blob en base64
             results.forEach(producto => {
-                producto.ImagenBase64 = producto.Imagenes.toString('base64');
-                delete producto.Imagenes; // Opcional: Eliminar la columna Imagenes blob del resultado si no se necesita
+                if (producto.Imagenes) { // Verificar si producto.Imagenes no es undefined
+                    producto.ImagenBase64 = producto.Imagenes.toString('base64');
+                    delete producto.Imagenes; // Opcional: Eliminar la columna Imagenes blob del resultado si no se necesita
+                }
             });
             return res.status(200).json(results);
         } else {
@@ -31,9 +33,10 @@ routerP.get('/getProducts', (req, res) => {
     })
 });
 
+
 routerP.get('/getProducts/:id', (req, res) => {
     const productId = req.params.id;
-    var query = "SELECT p.*, i.Imagen AS ImagenBase64 FROM Productos p LEFT JOIN Imagenes i ON p.ID = i.ProductoID WHERE p.ID = ?";
+    var query = "SELECT p.*, i.Imagen AS ImagenBase64 FROM productos p LEFT JOIN Imagenes i ON p.id = i.ProductoID WHERE p.id = ?";
     connection.query(query, [productId], (error, results) => {
         if (!error) {
             // Si no se encontraron resultados
@@ -63,7 +66,7 @@ routerP.post('/registrarProductoConImagenes', verifyToken, (req, res) => {
 
     // Consulta SQL para insertar un nuevo producto con su imagen en la tabla "Productos"
     const queryProducto = `
-        INSERT INTO Productos (Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, Imagenes) 
+        INSERT INTO productos (Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, Imagenes) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 

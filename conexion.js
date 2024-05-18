@@ -41,7 +41,7 @@ const pool = mysql.createPool({
 });
 
 // Realizar operaciones de base de datos
-pool.query('SELECT * FROM Productos', (error, results, fields) => {
+pool.query('SELECT * FROM productos', (error, results, fields) => {
     if (error) {
         console.error('Error al realizar la consulta:', error);
         return;
@@ -50,7 +50,7 @@ pool.query('SELECT * FROM Productos', (error, results, fields) => {
 });
 
 // Aquí dentro del callback, puedes realizar la segunda consulta y enviar la respuesta al cliente
-pool.query('SELECT p.*, i.Imagen AS ImagenBase64 FROM Productos p LEFT JOIN Imagenes i ON p.ID = i.ProductoID', (error, results) => {
+pool.query('SELECT p.*, i.Imagen AS ImagenBase64 FROM productos p LEFT JOIN Imagenes i ON p.id = i.ProductoID', (error, results) => {
     if (error) {
         console.error('Error al realizar la consulta:', error);
         return;
@@ -58,21 +58,20 @@ pool.query('SELECT p.*, i.Imagen AS ImagenBase64 FROM Productos p LEFT JOIN Imag
 
     const productosConImagenes = results.map(producto => {
         return {
-            ID: producto.ID,
-            Nombre: producto.Nombre,
-            Cantidad: producto.Cantidad,
-            Marca: producto.Marca,
-            Modelo: producto.Modelo,
-            Voltaje: producto.Voltaje,
-            Potencia: producto.Potencia,
-            Precio: producto.Precio,
-            Lumenes: producto.Lumenes,
-            Atenuable: producto.Atenuable,
-            VidaUtil: producto.VidaUtil,
-            Dimensiones: producto.Dimensiones,
-            Angulo: producto.Angulo,
-            Descripcion: producto.Descripcion,
-            Imagenes64: producto.ImagenBase64 ? producto.ImagenBase64.toString('base64') : null
+            id: producto.id,
+            nombre: producto.nombre,
+            Cantidad: producto.cantidad,
+            Marca: producto.marca,
+            Modelo: producto.modelo,
+            Voltaje: producto.voltaje,
+            Potencia: producto.potencia,
+            Precio: producto.precio,
+            Lumenes: producto.lumenes,
+            Atenuable: producto.atenuable,
+            VidaUtil: producto.vida_util,
+            Dimensiones: producto.dimensiones,
+            Angulo: producto.angulo,
+            Descripcion: producto.descripcion,
         };
     });
 
