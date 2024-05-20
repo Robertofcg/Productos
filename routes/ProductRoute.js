@@ -66,7 +66,7 @@ routerP.post('/registrarProductoConImagenes', verifyToken, (req, res) => {
 
     // Consulta SQL para insertar un nuevo producto con su imagen en la tabla "Productos"
     const queryProducto = `
-        INSERT INTO productos (Nombre, Cantidad, Marca, Modelo, Voltaje, Potencia, Precio, Lumenes, Atenuable, VidaUtil, Dimensiones, Angulo, Descripcion, Imagenes) 
+        INSERT INTO productos (nombre, cantidad, marca, modelo, voltaje, potencia, precio, lumenes, atenuable, vida_util, dimensiones, angulo, descripcion, imagenes) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
